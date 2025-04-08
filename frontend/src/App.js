@@ -3,12 +3,18 @@ import axios from "axios";
 import BookForm from "./BookForm";
 import BookList from "./BookList";
 import SearchBar from "./SearchBar";
+import LoginForm from "./LoginForm";
 
 const API = "http://localhost:3001/api/books";
 
 function App() {
   const [books, setBooks] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const [editingBook, setEditingBook] = useState(null);
 
   const fetchBooks = async () => {
     const res = await axios.get(API);
@@ -24,6 +30,19 @@ function App() {
     fetchBooks();
   }, []);
 
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-primary-100">
+        <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-lg">
+          <h1 className="text-2xl font-bold mb-4 text-center">
+            Mini Library Login
+          </h1>
+          <LoginForm onLogin={setUser} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -35,6 +54,18 @@ function App() {
             Your digital bookshelf for managing and tracking your book
             collection
           </p>
+          <p className="text-sm text-primary-500 mt-2">
+            Logged in as <strong>{user.email}</strong> ({user.role}) —{" "}
+            <button
+              onClick={() => {
+                localStorage.removeItem("user");
+                setUser(null);
+              }}
+              className="text-primary-700 hover:underline"
+            >
+              Logout
+            </button>
+          </p>
         </div>
 
         <div className="space-y-6">
@@ -42,7 +73,14 @@ function App() {
             <div className="mb-6">
               <SearchBar onSearch={searchBooks} />
             </div>
-            <BookForm onAdd={fetchBooks} />
+            {user.role === "admin" && (
+              <BookForm
+                onAdd={fetchBooks}
+                role={user.role}
+                editingBook={editingBook}
+                onClearEdit={() => setEditingBook(null)}
+              />
+            )}
           </div>
 
           <div className="bg-white/50 backdrop-blur-sm rounded-xl shadow-card p-6 transition-all duration-300 hover:shadow-lg border border-primary-100">
@@ -62,7 +100,12 @@ function App() {
               </svg>
               Book Collection
             </h2>
-            <BookList books={books} onRefresh={fetchBooks} />
+            <BookList
+              books={books}
+              onRefresh={fetchBooks}
+              onEdit={setEditingBook}
+              role={user.role}
+            />
           </div>
         </div>
       </div>

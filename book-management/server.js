@@ -3,7 +3,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const cors = require('cors');
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -29,9 +29,28 @@ db.run(`
   )
 `);
 
+db.serialize(() => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE NOT NULL,
+      role TEXT NOT NULL
+    )
+  `, (err) => {
+    if (err) console.error('Table creation failed:', err.message);
+    else {
+      db.run(`INSERT OR IGNORE INTO users (email, role) VALUES ('admin@lib.com', 'admin')`);
+      db.run(`INSERT OR IGNORE INTO users (email, role) VALUES ('user@lib.com', 'user')`);
+    }
+  });
+});
+
 // Routes
 const bookRoutes = require('./routes/books')(db);
 app.use('/api/books', bookRoutes);
+
+const userRoutes = require('./routes/users')(db);
+app.use('/api/users', userRoutes);
 
 // Base route
 app.get('/', (req, res) => {

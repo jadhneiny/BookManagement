@@ -26,7 +26,12 @@ module.exports = (db) => {
 
   // Add book
   router.post('/', (req, res) => {
-    const { title, author, year } = req.body;
+    const { title, author, year, role } = req.body;
+  
+    if (role !== 'admin') {
+      return res.status(403).json({ error: 'Only admins can add books' });
+    }
+  
     db.run(
       'INSERT INTO books (title, author, year) VALUES (?, ?, ?)',
       [title, author, year],
@@ -36,6 +41,7 @@ module.exports = (db) => {
       }
     );
   });
+  
 
   // Edit book
   router.put('/:id', (req, res) => {
