@@ -5,6 +5,11 @@ Users can log in with different roles, view and search books, borrow or return t
 
 ---
 
+##  Deployment 
+- Used Vercel and Render
+https://book-management-5zki6hq7x-jadhneinys-projects.vercel.app/
+
+
 ## 🚀 Features
 
 - 🔐 **Role-Based Authentication** (`admin`, `user`)
