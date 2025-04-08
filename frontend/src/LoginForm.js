@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const API = "http://localhost:3001/api/users/login";
+const API = process.env.REACT_APP_API_URL + "/users/login";
 
 export default function LoginForm({ onLogin }) {
   const [email, setEmail] = useState("");

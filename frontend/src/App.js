@@ -5,7 +5,7 @@ import BookList from "./BookList";
 import SearchBar from "./SearchBar";
 import LoginForm from "./LoginForm";
 
-const API = "http://localhost:3001/api/books";
+const API = process.env.REACT_APP_API_URL + "/books";
 
 function App() {
   const [books, setBooks] = useState([]);

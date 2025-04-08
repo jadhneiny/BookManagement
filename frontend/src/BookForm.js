@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 
-const API = "http://localhost:3001/api/books";
+const API = process.env.REACT_APP_API_URL + "/books";
 
 export default function BookForm({ onAdd, role, editingBook, onClearEdit }) {
   const [book, setBook] = useState({ title: "", author: "", year: "" });

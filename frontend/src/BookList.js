@@ -7,7 +7,7 @@ import {
   PencilSquareIcon,
 } from '@heroicons/react/24/outline';
 
-const API = 'http://localhost:3001/api/books';
+const API = process.env.REACT_APP_API_URL + "/books";
 
 export default function BookList({ books, onRefresh, onEdit, role }) {
   const deleteBook = async (id) => {
